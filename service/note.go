@@ -1,4 +1,4 @@
-package repository
+package service
 
 type Note struct {
 	Id       int64
