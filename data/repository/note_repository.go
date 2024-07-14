@@ -9,7 +9,7 @@ import (
 type INoteRepository interface {
 	GetAllNotes() ([]model.Note, error)
 	InsertNote(note model.Note) error
-	GetNoteById(id int64) (model.Note, error)
+	GetNoteById(id string) (model.Note, error)
 	UpdateNote(note model.Note) error
 }
 
@@ -36,7 +36,7 @@ func (noteRepository *NoteRepository) InsertNote(note model.Note) error {
 	return nil
 }
 
-func (noteRepository *NoteRepository) GetNoteById(id int64) (model.Note, error) {
+func (noteRepository *NoteRepository) GetNoteById(id string) (model.Note, error) {
 	row := noteRepository.dbConn.QueryRow("SELECT * FROM note WHERE id = $1", id)
 
 	note, err := extractNoteFromRow(row)
