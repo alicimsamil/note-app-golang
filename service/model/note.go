@@ -1,4 +1,4 @@
-package service
+package model
 
 type Note struct {
 	Id       int64
