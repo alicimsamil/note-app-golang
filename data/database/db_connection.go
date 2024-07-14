@@ -22,7 +22,7 @@ func CreateDBConn() (*sql.DB, error) {
 
 	conn, err := sql.Open(driverName, connStr)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -36,6 +36,6 @@ func CreateDBConn() (*sql.DB, error) {
 func CloseDBConn(db *sql.DB) {
 	err := db.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
