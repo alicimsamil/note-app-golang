@@ -1,4 +1,4 @@
-package request
+package model
 
 type AddNoteRequest struct {
 	Title    string `json:"title"`

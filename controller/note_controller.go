@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"noteapp/controller/request"
+	"noteapp/controller/model"
 	"noteapp/service"
 )
 
@@ -18,10 +18,10 @@ func (controller *NoteController) GetAllNotes(rw http.ResponseWriter, r *http.Re
 	if err != nil {
 		rw.WriteHeader(http.StatusNotFound)
 	} else {
-		var response []request.NoteResponse
+		var response []model.NoteResponse
 		for _, element := range notes {
 			response = append(response,
-				request.NoteResponse{
+				model.NoteResponse{
 					Id:       element.Id,
 					Title:    element.Title,
 					Body:     element.Body,
@@ -35,7 +35,7 @@ func (controller *NoteController) GetAllNotes(rw http.ResponseWriter, r *http.Re
 }
 
 func (controller *NoteController) AddNote(rw http.ResponseWriter, r *http.Request) {
-	var note request.AddNoteRequest
+	var note model.AddNoteRequest
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.AddNote(note)
 	if err != nil {
@@ -52,7 +52,7 @@ func (controller *NoteController) GetNoteById(rw http.ResponseWriter, r *http.Re
 	if err != nil {
 		rw.WriteHeader(http.StatusNotFound)
 	} else {
-		var noteResponse = request.NoteResponse{
+		var noteResponse = model.NoteResponse{
 			Id:       note.Id,
 			Title:    note.Title,
 			Body:     note.Body,
@@ -64,7 +64,7 @@ func (controller *NoteController) GetNoteById(rw http.ResponseWriter, r *http.Re
 }
 
 func (controller *NoteController) UpdateNote(rw http.ResponseWriter, r *http.Request) {
-	var note request.UpdateNoteRequest
+	var note model.UpdateNoteRequest
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.UpdateNote(note)
 	if err != nil {
