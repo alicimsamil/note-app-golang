@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
+	"noteapp/controller/middleware"
 	"noteapp/controller/model"
 	"noteapp/service"
 )
@@ -13,7 +14,7 @@ type NoteController struct {
 	service service.INoteService
 }
 
-func (controller *NoteController) GetAllNotes(rw http.ResponseWriter, r *http.Request) {
+func (controller *NoteController) getAllNotes(rw http.ResponseWriter, r *http.Request) {
 	notes, err := controller.service.GetAllNotes()
 	if err != nil {
 		rw.WriteHeader(http.StatusNotFound)
@@ -34,7 +35,7 @@ func (controller *NoteController) GetAllNotes(rw http.ResponseWriter, r *http.Re
 	}
 }
 
-func (controller *NoteController) AddNote(rw http.ResponseWriter, r *http.Request) {
+func (controller *NoteController) addNote(rw http.ResponseWriter, r *http.Request) {
 	var note model.AddNoteRequest
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.AddNote(note)
@@ -45,7 +46,7 @@ func (controller *NoteController) AddNote(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-func (controller *NoteController) GetNoteById(rw http.ResponseWriter, r *http.Request) {
+func (controller *NoteController) getNoteById(rw http.ResponseWriter, r *http.Request) {
 	args := mux.Vars(r)
 	noteId := args["id"]
 	note, err := controller.service.GetNoteById(noteId)
@@ -63,7 +64,7 @@ func (controller *NoteController) GetNoteById(rw http.ResponseWriter, r *http.Re
 	}
 }
 
-func (controller *NoteController) UpdateNote(rw http.ResponseWriter, r *http.Request) {
+func (controller *NoteController) updateNote(rw http.ResponseWriter, r *http.Request) {
 	var note model.UpdateNoteRequest
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.UpdateNote(note)
@@ -76,10 +77,10 @@ func (controller *NoteController) UpdateNote(rw http.ResponseWriter, r *http.Req
 
 func (controller *NoteController) InitRouter() *mux.Router {
 	router := mux.NewRouter()
-	router.Path("/notes").HandlerFunc(controller.GetAllNotes).Methods(http.MethodGet)
-	router.Path("/note/{id}").HandlerFunc(controller.GetNoteById).Methods(http.MethodGet)
-	router.Path("/note").HandlerFunc(controller.AddNote).Methods(http.MethodPost)
-	router.Path("/note").HandlerFunc(controller.UpdateNote).Methods(http.MethodPut)
+	router.Path("/notes").HandlerFunc(middleware.Logging(controller.getAllNotes)).Methods(http.MethodGet)
+	router.Path("/note/{id}").HandlerFunc(middleware.Logging(controller.getNoteById)).Methods(http.MethodGet)
+	router.Path("/note").HandlerFunc(middleware.Logging(controller.addNote)).Methods(http.MethodPost)
+	router.Path("/note").HandlerFunc(middleware.Logging(controller.updateNote)).Methods(http.MethodPut)
 	return router
 }
 
