@@ -16,12 +16,12 @@ type NoteController struct {
 func (controller *NoteController) GetAllNotes(rw http.ResponseWriter, r *http.Request) {
 	notes, err := controller.service.GetAllNotes()
 	if err != nil {
-		fmt.Fprintln(rw, err)
+		rw.WriteHeader(http.StatusNotFound)
 	} else {
-		var response []request.UpdateNoteRequest
+		var response []request.NoteResponse
 		for _, element := range notes {
 			response = append(response,
-				request.UpdateNoteRequest{
+				request.NoteResponse{
 					Id:       element.Id,
 					Title:    element.Title,
 					Body:     element.Body,
@@ -39,7 +39,7 @@ func (controller *NoteController) AddNote(rw http.ResponseWriter, r *http.Reques
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.AddNote(note)
 	if err != nil {
-		fmt.Fprintln(rw, err)
+		rw.WriteHeader(http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(rw, "Note added successfully.")
 	}
@@ -50,9 +50,9 @@ func (controller *NoteController) GetNoteById(rw http.ResponseWriter, r *http.Re
 	noteId := args["id"]
 	note, err := controller.service.GetNoteById(noteId)
 	if err != nil {
-		fmt.Fprintln(rw, err)
+		rw.WriteHeader(http.StatusNotFound)
 	} else {
-		var noteResponse = request.UpdateNoteRequest{
+		var noteResponse = request.NoteResponse{
 			Id:       note.Id,
 			Title:    note.Title,
 			Body:     note.Body,
@@ -68,7 +68,7 @@ func (controller *NoteController) UpdateNote(rw http.ResponseWriter, r *http.Req
 	json.NewDecoder(r.Body).Decode(&note)
 	err := controller.service.UpdateNote(note)
 	if err != nil {
-		fmt.Fprintln(rw, err)
+		rw.WriteHeader(http.StatusBadRequest)
 	} else {
 		fmt.Fprintln(rw, "Successfully updated.")
 	}
